@@ -10,6 +10,8 @@
 
 #define ForEntityTypes(EntityType)  \
     EntityType(Player)              \
+    EntityType(Enemy)               \
+    EntityType(Bullet)              \
 
 // ---------------------------------------------------
 
@@ -205,7 +207,7 @@ fn entity_get(Entity_Handle handle) -> Entity*;
 fn entity_pass(void (*update)(Entity*)) -> void;
 
 #define EntityGet(EntityType, EntityHandle) \
-    (EntityType*) entity_get(EntityHanle)
+    (EntityType*) entity_get(EntityHandle)
 
 #endif
 
