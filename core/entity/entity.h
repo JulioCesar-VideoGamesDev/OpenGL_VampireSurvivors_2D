@@ -76,13 +76,23 @@ inline fn from_string(std::string_view str, Entity_Kind* pKind) {
 // Base entity type.
 struct Entity {
     Entity_Kind kind = Entity_Kind_None;
+
     bool enabled = true;
     bool visible = true;
+
     Vec3 pos = F32.Zero;
     Vec3 rot = F32.Zero;
     Vec3 scl = F32.One;
+
     Vec4 tint = Color.White;
     s32  sprite = 0;
+
+    s32 frame_count = 0;
+    s32 curr_frame = 0;
+    f32 frame_timer = 0.f;
+
+    f32 frame_duration = 0.f;
+
     struct Texture* tex = nullptr; // @Pending: This should be an asset handle.
 };
 

@@ -43,32 +43,12 @@ void entity_create_many(Entity_Kind kind, s32 count, Entity_Handle* out)
 //entity_create_many(Entity_Kind_Bullet, 10, bullets);
 
 fn main() -> s32 {
-    entity_storage_init();
-
-    // Crear enemigos
-
-    Entity_Handle enemies[3];
-    entity_create_many(Entity_Kind_Enemy, 3, enemies);
-
-
-    // Inicializar datos
-
-    for (int i = 0; i < 3; i++) {
-
-        Enemy* e = EntityGet(Enemy, enemies[i]);
-
-        e->pos = { (f32)i * 2.0f, 0, 0 };
-        e->hp = 100 + i;
-    }
-
-    entity_storage_done();
-
 
     App_Desc desc;
     desc.window.title = L"Survive 2D";
     app_init(desc);
     draw_init();
-    
+
     Texture monk_run_texture;
     {
         Texture_Def def;
@@ -79,11 +59,34 @@ fn main() -> s32 {
     }
 
     s32 frame_count = monk_run_texture.subtexs.count;
-    s32 anim_frames = 12;
     s32 curr_frame = 0;
-    s32 last_frame = frame_count - 1;
-    f32 frame_duration = 1.0f / (f32) anim_frames; 
-    f32 frame_timer = 0.0f;
+    s32 anim_frames = 12;
+    f32 frame_duration = 1.f / (f32)anim_frames;
+    f32 frame_timer = 0.f;
+    //s32 last_frame = frame_count - 1;*/
+
+    entity_storage_init();
+
+    // Crear enemigos
+
+    Entity_Handle enemies[3];
+    entity_create_many(Entity_Kind_Enemy, 3, enemies);
+
+	// Inicializar datos de los enemigos
+
+    for (int i = 0; i < 3; i++) {
+
+        Enemy* e = EntityGet(Enemy, enemies[i]);
+
+        e->tex = &monk_run_texture;
+
+        e->frame_count =
+            monk_run_texture.subtexs.count;
+
+        e->frame_duration = frame_duration;
+
+        e->pos = { (f32)i * 2.0f, 0, 0 };
+    }
 
     while(app_running()) {
        
@@ -97,11 +100,31 @@ fn main() -> s32 {
             }
         }
 
+        
+
         clear_back_buffer();
-        draw_sprite(&monk_run_texture, curr_frame, Color.White, Mat4::transform(F32.Zero, F32.Zero, Vec3(F32.One) * 3.0f));
+
+        for (int i = 0; i < 3; i++)
+        {
+            Enemy* e = EntityGet(Enemy, enemies[i]);
+
+            draw_sprite(
+                e->tex,
+                curr_frame,
+                e->tint,
+                Mat4::transform(
+                    e->pos,
+                    e->rot,
+                    e->scl
+                )
+            );
+        }
+
+        //draw_sprite(&monk_run_texture, curr_frame, Color.White, Mat4::transform(F32.Zero, F32.Zero, Vec3(F32.One) * 3.0f));
         os_swap_buffers();
     }
 
+    entity_storage_done();
     texture_done(&monk_run_texture);
     draw_done();
     app_done();
