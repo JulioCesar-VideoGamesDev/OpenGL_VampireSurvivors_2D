@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/3rd/box2d/include",
+                "${workspaceFolder}/3rd/box2d/src"
+            ],
+            "defines": [
+                "GAME_DEBUG",
+                "GAME_GL", 
+                "GAME_WIN",
+                "WIN32",
+                "_WINDOWS",
+                "_UNICODE",
+                "UNICODE"
+            ],
+            "compilerPath": "cl.exe",
+            "intelliSenseMode": "msvc-x64",
+            "forcedInclude": [
+                "${workspaceFolder}/core/core_pch.h"
+            ]
+        }
+    ],
+    "version": 4
+}
