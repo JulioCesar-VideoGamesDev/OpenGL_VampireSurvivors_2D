@@ -193,7 +193,8 @@ fn deserialize_fields_base_entity(Deserializer* d, Entity* e) -> bool {
 // Entity handle.
 struct Entity_Handle {
     Entity_Kind kind = Entity_Kind_None;
-    Array_Handle value;
+    Array_Handle value{};
+    u32 length{};
 };
 
 #define EntityStorage(EntityType) \
