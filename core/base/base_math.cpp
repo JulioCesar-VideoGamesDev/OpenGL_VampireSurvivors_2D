@@ -676,3 +676,49 @@ fn AABB::overlap(const AABB& a, const AABB& b) -> bool {
     return (abs(a.x - b.x) <= (a.half_w + b.half_w)) &&
            (abs(a.y - b.y) <= (a.half_h + b.half_h));
 }
+
+fn AABB::hit(const AABB& a, const AABB& b) -> HitResult
+{
+    HitResult result{};
+
+    f32 dx = b.x - a.x;
+    f32 px = (a.half_w + b.half_w) - abs(dx);
+
+    if (px <= 0.f)
+        return result;
+
+    f32 dy = b.y - a.y;
+    f32 py = (a.half_h + b.half_h) - abs(dy);
+
+    if (py <= 0.f)
+        return result;
+
+    result.hit = true;
+
+    if (px < py)
+    {
+        result.normal.x = (dx < 0.f) ? -1.f : 1.f;
+    }
+    else
+    {
+        result.normal.y = (dy < 0.f) ? -1.f : 1.f;
+    }
+
+    return result;
+}
+
+AABB updateBoxCollisionPosition2D(Vec3 position, AABB collision)
+{
+    collision.x = position.x;
+    collision.y = position.y;
+
+    return collision;
+}
+
+AABB setBoxCollisionSize2D(AABB collision, f32 vtx_maxWithPosition, f32 vtx_maxHeightPosition, Vec3 scale)
+{
+    collision.half_w = vtx_maxWithPosition * scale.x; // QUAD_VTS[2]
+    collision.half_h = vtx_maxHeightPosition * scale.y; // QUAD_VTS[5]
+
+    return collision;
+}
