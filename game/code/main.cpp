@@ -80,7 +80,6 @@ Enemy* updateEnemy(Enemy* e)
         }
 
         e->pos += Vec3(e->target->pos - e->pos).normalized() * e->speed * os_delta_time();
-
         e->boxCollision2D = updateBoxCollisionPosition2D(e->pos, e->boxCollision2D);
     }
     else
@@ -88,6 +87,9 @@ Enemy* updateEnemy(Enemy* e)
         Vec2 newPosition = GetRandomPointOnCircle({ e->target->pos.x, e->target->pos.y }, enemySpawningRadius);
 
         e->pos = { newPosition.x, newPosition.y, 0 }; // If the enemy is disable, then enable it and place it in a random position of a circumference around the player. If not then move to the player.
+        e->boxCollision2D = updateBoxCollisionPosition2D(e->pos, e->boxCollision2D);
+
+        e->enabled = true;
     }
     return e;
 }
@@ -136,7 +138,8 @@ fn main() -> s32 {
     Entity_Handle enemiesHandle[enemyPoolNumber];
     entity_create_many(Entity_Kind_Enemy, enemyPoolNumber, enemiesHandle);
 
-    for (int i = 0; i < enemiesHandle->length; i++) {
+    for (int i = 0; i < enemiesHandle->length; i++)
+    {
 
         Enemy* e = EntityGet(Enemy, enemiesHandle[i]);
 
@@ -183,6 +186,15 @@ fn main() -> s32 {
 
         clear_back_buffer();
 
+        // UpdatePlayer
+        
+        os_set_cursor_mode(Cursor_Mode::Hidden);
+        if (os_key_down('W')) p->pos.y += p->speed * os_delta_time();
+        if (os_key_down('S')) p->pos.y -= p->speed * os_delta_time();
+        if (os_key_down('D')) p->pos.x += p->speed * os_delta_time();
+        if (os_key_down('A')) p->pos.x -= p->speed * os_delta_time();
+        p->boxCollision2D = updateBoxCollisionPosition2D(p->pos, p->boxCollision2D);
+
         // UpdateEnemies
         for (int i = 0; i < enemiesHandle->length; i++)
         {
@@ -192,16 +204,7 @@ fn main() -> s32 {
 
             if (e->enabled)
             {
-                draw_sprite(
-                    e->tex,
-                    curr_frame,
-                    e->tint,
-                    Mat4::transform(
-                        e->pos,
-                        e->rot,
-                        e->scl
-                    )
-                );
+                draw_sprite(e->tex, e->curr_frame, e->tint, Mat4::transform(e->pos, e->rot, e->scl));
             }
         }
 
